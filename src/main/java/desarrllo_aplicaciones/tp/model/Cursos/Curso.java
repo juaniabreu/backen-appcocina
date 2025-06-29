@@ -57,6 +57,7 @@ public class Curso {
 
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
+
     private String dia;
 
     public String getDia() {

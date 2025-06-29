@@ -24,6 +24,7 @@ public class IngredienteReceta {
 
     @ManyToOne
     @JoinColumn(name = "receta_id")
+    @JsonBackReference("receta-ingredientes")
     private Receta receta;
 
     private String unidad;

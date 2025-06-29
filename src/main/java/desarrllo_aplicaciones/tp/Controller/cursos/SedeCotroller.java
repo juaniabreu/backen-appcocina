@@ -20,19 +20,6 @@ public class SedeCotroller {
     @Autowired
     SedeService sedeService;
 
-
-    /**GET /sedes: listar todas las sedes
-
-     GET /sedes/{id}: detalles de una sede
-
-     GET /sedes/{id}/cursos: cursos dictados en esa sede
-
-     POST /sedes: crear sede (admin)
-
-     PUT /sedes/{id}: editar
-
-     DELETE /sedes/{id}: eliminar*/
-
     @GetMapping
     public ResponseEntity<List<Sede>> getAllSedes() {
         return ResponseEntity.ok(sedeService.findAll());

@@ -37,14 +37,18 @@ public class Receta {
 
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id")
+    @JsonBackReference("usuario-recetas")
     private Usuario autor;
 
     @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
+    @JsonManagedReference("receta-ingredientes")
     private List<IngredienteReceta> ingredientes;
 
     @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
+    @JsonManagedReference("receta-pasos")
     private List<PasoReceta> pasos;
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
+    @JsonManagedReference("receta-valoraciones")
     private List<Valoracion> valoraciones;
 
     public List<Valoracion> getValoraciones() {

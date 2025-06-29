@@ -108,7 +108,7 @@ GET /recetas/noIngrediente?nombre=harina: recetas sin cierto ingrediente ?????**
         recetaService.borrarReceta(id);
         return ResponseEntity.accepted().build();
     }
-
+    @PermitAll
     @PostMapping("/crear")
     public ResponseEntity<Receta> crearReceta(@RequestBody Receta receta) {
         Optional<Receta> recetaOptional = recetaService.buscarPorNombreUsuario(receta.getNombre(), receta.getAutor().getId());

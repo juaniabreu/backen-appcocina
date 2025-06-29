@@ -1,5 +1,6 @@
 package desarrllo_aplicaciones.tp.model.Recetas;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import desarrllo_aplicaciones.tp.model.Cursos.Usuario;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -17,9 +18,11 @@ import java.time.LocalDateTime;
         private Long id;
 
         @ManyToOne(cascade = CascadeType.ALL)
+        @JsonBackReference("receta-valoraciones")
         private Receta receta;
 
         @ManyToOne(cascade = CascadeType.ALL)
+        @JsonBackReference("usuario-valoraciones")
         private Usuario usuario;
 
         @Column(nullable = false)

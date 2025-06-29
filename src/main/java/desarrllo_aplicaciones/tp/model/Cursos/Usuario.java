@@ -62,11 +62,10 @@ public class Usuario implements UserDetails {
 
     private String edad;
     @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL)
-    @JsonIgnore
+    @JsonManagedReference("usuario-recetas")
     private List<Receta> listaRecetas;
     @OneToMany(mappedBy = "id")
     private List<Receta> listaRecetasGuardadas;
-
     @ManyToMany
     @JoinTable(name = "usuario_curso")
     private List<Curso> cursosInscriptos;
