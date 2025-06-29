@@ -57,6 +57,15 @@ public class Curso {
 
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
+    private String dia;
+
+    public String getDia() {
+        return dia;
+    }
+
+    public void setDia(String dia) {
+        this.dia = dia;
+    }
 
     @ElementCollection
     private List<String> temas; // o @OneToMany si querés detalle

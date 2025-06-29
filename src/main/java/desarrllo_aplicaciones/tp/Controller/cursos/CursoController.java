@@ -122,8 +122,10 @@ public class CursoController {
     @PostMapping("/{idCurso}/inscribirse")
     public ResponseEntity<?> inscribirseCurso(
             @PathVariable Long idCurso,
+            @RequestParam Long idSede,
             @RequestParam Long idUsuario) {
         try {
+
             Curso curso = cursoService.inscribirAlumno(idCurso, idUsuario);
             return ResponseEntity.ok("Inscripción exitosa al curso: " + curso.getNombre());
         } catch (RuntimeException e) {

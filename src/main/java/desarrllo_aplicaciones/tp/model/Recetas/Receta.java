@@ -3,6 +3,7 @@ package desarrllo_aplicaciones.tp.model.Recetas;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import desarrllo_aplicaciones.tp.model.Cursos.Usuario;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -36,17 +37,14 @@ public class Receta {
 
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id")
-    @JsonBackReference
     private Usuario autor;
 
     @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
     private List<IngredienteReceta> ingredientes;
 
     @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
-    @JsonBackReference
     private List<PasoReceta> pasos;
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
-    @JsonBackReference
     private List<Valoracion> valoraciones;
 
     public List<Valoracion> getValoraciones() {

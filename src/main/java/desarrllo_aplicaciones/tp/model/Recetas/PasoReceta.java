@@ -70,6 +70,5 @@ public class PasoReceta {
 
     @ManyToOne
     @JoinColumn(name = "receta_id")
-    @JsonBackReference
     private Receta receta;
 }
