@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ValoracionService {
@@ -18,5 +19,10 @@ public class ValoracionService {
     public Valoracion guardarValoracion(Valoracion valoracion){
         return valoracionRepository.save(valoracion);
     }
-
+    public Optional<Valoracion> findValoracionById(Long valoracionId){
+        return valoracionRepository.findById(valoracionId);
+    }
+    public List<Valoracion> findAllValoracionesAprobadas(Long idReceta){
+        return valoracionRepository.findByRecetaIdAndAprobadoTrue(idReceta);
+    }
 }

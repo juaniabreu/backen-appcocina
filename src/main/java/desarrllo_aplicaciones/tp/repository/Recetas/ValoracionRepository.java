@@ -1,5 +1,6 @@
 package desarrllo_aplicaciones.tp.repository.Recetas;
 
+import desarrllo_aplicaciones.tp.model.Recetas.Receta;
 import desarrllo_aplicaciones.tp.model.Recetas.Valoracion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -14,5 +15,6 @@ public interface ValoracionRepository extends JpaRepository<Valoracion, Long> {
     boolean existsByUsuarioIdAndRecetaId(Long usuarioId, Long recetaId);
 
     List<Valoracion> findByRecetaId(Long recetaId);
+    Valoracion findByIdAndReceta(Long valoracionId, Receta receta);
 
 }

@@ -28,7 +28,7 @@ import java.time.LocalDateTime;
         @Lob
         private String comentario;
 
-        private boolean aprobado = false;
+        private boolean aprobado;
 
         private LocalDateTime fecha = LocalDateTime.now();
 
@@ -78,6 +78,9 @@ import java.time.LocalDateTime;
 
     public void setAprobado(boolean aprobado) {
         this.aprobado = aprobado;
+    }
+    public  void aprobar(){
+            this.aprobado= true;
     }
 
     public LocalDateTime getFecha() {

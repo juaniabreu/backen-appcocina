@@ -41,7 +41,6 @@ public class RecetaService {
     }
 
     public Receta guardarReceta(Receta receta) {
-        receta.setAprobada(false);
         return recetaRepo.save(receta);
     }
     public Optional<Receta> existeReceta(String nombre,Long usuarioId) {

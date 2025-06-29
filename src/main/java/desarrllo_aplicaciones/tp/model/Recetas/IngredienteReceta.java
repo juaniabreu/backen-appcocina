@@ -1,5 +1,6 @@
 package desarrllo_aplicaciones.tp.model.Recetas;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,8 +24,18 @@ public class IngredienteReceta {
 
     @ManyToOne
     @JoinColumn(name = "receta_id")
-    @JsonIgnore
+    @JsonBackReference
     private Receta receta;
+
+    private String unidad;
+
+    public String getUnidad() {
+        return unidad;
+    }
+
+    public void setUnidad(String unidad) {
+        this.unidad = unidad;
+    }
 
     public Long getId() {
         return id;

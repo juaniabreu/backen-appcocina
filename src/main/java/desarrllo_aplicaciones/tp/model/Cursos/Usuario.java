@@ -2,6 +2,7 @@ package desarrllo_aplicaciones.tp.model.Cursos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import desarrllo_aplicaciones.tp.model.Recetas.Receta;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -62,8 +63,10 @@ public class Usuario implements UserDetails {
     private String edad;
     @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL)
     @JsonIgnore
+    @JsonManagedReference
     private List<Receta> listaRecetas;
     @OneToMany(mappedBy = "id")
+    @JsonManagedReference
     private List<Receta> listaRecetasGuardadas;
 
     @ManyToMany

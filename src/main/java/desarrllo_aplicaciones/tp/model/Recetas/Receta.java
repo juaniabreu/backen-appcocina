@@ -1,5 +1,6 @@
 package desarrllo_aplicaciones.tp.model.Recetas;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import desarrllo_aplicaciones.tp.model.Cursos.Usuario;
@@ -35,14 +36,17 @@ public class Receta {
 
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id")
+    @JsonBackReference
     private Usuario autor;
 
-    @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
     private List<IngredienteReceta> ingredientes;
 
-    @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
+    @JsonBackReference
     private List<PasoReceta> pasos;
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
+    @JsonBackReference
     private List<Valoracion> valoraciones;
 
     public List<Valoracion> getValoraciones() {
@@ -53,7 +57,7 @@ public class Receta {
         this.valoraciones = valoraciones;
     }
 
-    private boolean aprobada = false;
+    private boolean aprobada;
 
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
@@ -135,6 +139,9 @@ public class Receta {
 
     public void setAprobada(boolean aprobada) {
         this.aprobada = aprobada;
+    }
+    public void aprobar(){
+        this.aprobada =true;
     }
 
     public LocalDateTime getFechaCreacion() {
