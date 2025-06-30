@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -35,21 +36,32 @@ public class Receta {
     @ElementCollection
     private List<String> fotosPlato; // URLs o nombres de archivo
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "usuario_id")
-    @JsonBackReference("usuario-recetas")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    @JsonBackReference("usuario-recetas-creadas")
     private Usuario autor;
 
-    @OneToMany(mappedBy = "receta", orphanRemoval = true,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "receta", orphanRemoval = true,fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JsonManagedReference("receta-ingredientes")
     private List<IngredienteReceta> ingredientes;
 
-    @OneToMany(mappedBy = "receta", orphanRemoval = true,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "receta", orphanRemoval = true,fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JsonManagedReference("receta-pasos")
     private List<PasoReceta> pasos;
-    @OneToMany(mappedBy = "id", orphanRemoval = true,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "receta", orphanRemoval = true, fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JsonManagedReference("receta-valoraciones")
     private List<Valoracion> valoraciones;
+
+    @ManyToMany(mappedBy = "listaRecetasGuardadas")
+    private List<Usuario> usuariosQueGuardaron = new ArrayList<>();
+
+    public List<Usuario> getUsuariosQueGuardaron() {
+        return usuariosQueGuardaron;
+    }
+
+    public void setUsuariosQueGuardaron(List<Usuario> usuariosQueGuardaron) {
+        this.usuariosQueGuardaron = usuariosQueGuardaron;
+    }
 
     public List<Valoracion> getValoraciones() {
         return valoraciones;
@@ -152,5 +164,15 @@ public class Receta {
 
     public void setFechaCreacion(LocalDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
+    }
+
+    @Override
+    public String toString() {
+        return "Receta{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", descripcion='" + descripcion + '\'' +
+                ", autor=" + autor +
+                '}';
     }
 }

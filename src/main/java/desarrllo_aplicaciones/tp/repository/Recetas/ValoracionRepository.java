@@ -14,7 +14,7 @@ public interface ValoracionRepository extends JpaRepository<Valoracion, Long> {
 
     boolean existsByUsuarioIdAndRecetaId(Long usuarioId, Long recetaId);
 
-    List<Valoracion> findByRecetaId(Long recetaId);
     Valoracion findByIdAndReceta(Long valoracionId, Receta receta);
+    List<Valoracion> findByRecetaId(Long recetaId);
 
 }

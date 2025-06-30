@@ -61,16 +61,15 @@ public class Usuario implements UserDetails {
     private String fotoDniDorso;
 
     private String edad;
-    @ManyToMany
+
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
             name = "usuario_recetas_guardadas",
             joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "receta_id")
     )
-    @JsonManagedReference("usuario-recetas")
-    private List<Receta> listaRecetas;
-    @OneToMany(mappedBy = "id")
-    private List<Receta> listaRecetasGuardadas;
+    @JsonIgnore
+    private List<Receta> listaRecetasGuardadas = new ArrayList<>();
     @ManyToMany
     @JoinTable(name = "usuario_curso")
     private List<Curso> cursosInscriptos;
@@ -90,15 +89,6 @@ public class Usuario implements UserDetails {
     public void setListaRecetasGuardadas(List<Receta> listaRecetasGuardadas) {
         this.listaRecetasGuardadas = listaRecetasGuardadas;
     }
-
-    public List<Receta> getListaRecetas() {
-        return listaRecetas;
-    }
-
-    public void setListaRecetas(List<Receta> listaRecetas) {
-        this.listaRecetas = listaRecetas;
-    }
-
 
     public String getEdad() {
         return edad;

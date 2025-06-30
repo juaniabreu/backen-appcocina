@@ -124,26 +124,19 @@ GET /recetas/noIngrediente?nombre=harina: recetas sin cierto ingrediente ?????**
     public List<Receta> buscarPorUsuario(@PathVariable Long idUsuario) {
         return recetaService.recetasPorUsuario(idUsuario);
     }
-
+/*
     @GetMapping("/usuario/{id}")
     public List<Receta> porUsuario(@PathVariable Long id) {
         return recetaService.recetasPorUsuario(id);
     }
-
+*/
     @DeleteMapping("/recetas/{id}")
     public ResponseEntity<?> eliminarReceta(@PathVariable Long id) {
-
-            Optional<Receta> receta = recetaService.findbyID(id);
-            if (receta.isPresent()) {
-                Receta receta1  = receta.get();
-                receta1.setAutor(null);
-                return ResponseEntity.noContent().build(); // 204 No Content
-            }
-            return ResponseEntity.notFound().build();
-
+        recetaRepository.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 
-    @PermitAll
+
     @PostMapping("/crear")
     public ResponseEntity<Receta> crearReceta(@RequestBody Receta receta) {
         Optional<Receta> recetaOptional = recetaService.buscarPorNombreUsuario(receta.getNombre(), receta.getAutor().getId());
@@ -178,7 +171,6 @@ GET /recetas/noIngrediente?nombre=harina: recetas sin cierto ingrediente ?????**
 
     @PutMapping("/{id}/guardarEnUsuario")
     @Transactional
-
     public ResponseEntity<List<Receta>> guardarRecetaEnUsuario(
             @PathVariable Long id,
             @RequestBody Long idUsuario) {
@@ -191,16 +183,19 @@ GET /recetas/noIngrediente?nombre=harina: recetas sin cierto ingrediente ?????**
 
         // Evitar duplicados
         if (!usuario.getListaRecetasGuardadas().contains(receta)) {
-            usuario.getListaRecetasGuardadas().add(receta);
+           List<Receta> recetasGuardadas = usuario.getListaRecetasGuardadas();
+           recetasGuardadas.add(receta);
+           usuario.setListaRecetasGuardadas(recetasGuardadas);
+           for (Receta receta1 : usuario.getListaRecetasGuardadas()) {
+               System.out.println(receta1.toString());
+           }
+            usuarioRepository.save(usuario);
+
         }
-
-        usuarioRepository.save(usuario); // 💾 Guarda el vínculo en la tabla intermedia
-
-        return ResponseEntity.ok(usuario.getListaRecetasGuardadas());
-
+          return ResponseEntity.ok().body(usuario.getListaRecetasGuardadas());
     }
 
-    @PutMapping("/{id}/guardar")
+    @PutMapping("/{id}/eliminarGuardada")
     public ResponseEntity<List<Receta>> eliminarRecetaGuardada(@PathVariable Long id, @RequestBody Long idUsuario) {
         Usuario usuario = userDetailsService.findById(idUsuario);
         List<Receta> lista = usuario.getListaRecetasGuardadas();
@@ -218,7 +213,7 @@ GET /recetas/noIngrediente?nombre=harina: recetas sin cierto ingrediente ?????**
     }
 
     @PostMapping("/{id}/valorar")
-    public ResponseEntity<Valoracion> valorar(@RequestBody ValoracionDTO valoracionDTO, @PathVariable Long id) {
+    public ResponseEntity<Receta> valorar(@RequestBody ValoracionDTO valoracionDTO, @PathVariable Long id) {
         Usuario usuario = userDetailsService.findById(valoracionDTO.getUsuarioId());
         Optional<Receta> receta = recetaService.findbyID(id);
         if (receta.isPresent()) {
@@ -230,8 +225,8 @@ GET /recetas/noIngrediente?nombre=harina: recetas sin cierto ingrediente ?????**
             valoracion.setComentario(valoracionDTO.getComentario());
             valoracion.setPuntaje(valoracionDTO.getPuntaje());
             recetaGet.getValoraciones().add(valoracion);
-            recetaService.guardarReceta(recetaGet);
-            return ResponseEntity.ok(valoracion);
+
+            return ResponseEntity.ok(recetaService.guardarReceta(recetaGet));
              }
 
         return ResponseEntity.badRequest().build();
@@ -240,6 +235,10 @@ GET /recetas/noIngrediente?nombre=harina: recetas sin cierto ingrediente ?????**
     @GetMapping("/{id}/valoraciones")
     public List<Valoracion> valoraciones(@PathVariable Long id) {
         return recetaService.obtenerValoracionesAprobadas(id);
+    }
+    @GetMapping("/{id}/valoracionesAll")
+    public List<Valoracion> obtenerValoraciones(@PathVariable Long id) {
+        return valoracionService.findByRecetaId(id);
     }
 
 

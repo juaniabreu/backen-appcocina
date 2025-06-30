@@ -17,9 +17,11 @@ import java.time.LocalDateTime;
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
-        @ManyToOne(cascade = CascadeType.ALL)
+        @ManyToOne
+        @JoinColumn(name = "receta_id", nullable = false)
         @JsonBackReference("receta-valoraciones")
         private Receta receta;
+
 
         @ManyToOne(cascade = CascadeType.ALL)
         @JsonBackReference("usuario-valoraciones")

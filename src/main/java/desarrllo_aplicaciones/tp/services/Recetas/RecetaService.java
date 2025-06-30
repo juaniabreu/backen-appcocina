@@ -77,6 +77,7 @@ public class RecetaService {
     }
 
 
+
     public List<Receta> buscarPorIngrediente(String ingrediente) {
         List<IngredienteReceta> relacionados = ingredienteRepo.findByNombreIngredienteIgnoreCaseContaining(ingrediente);
         return relacionados.stream()
