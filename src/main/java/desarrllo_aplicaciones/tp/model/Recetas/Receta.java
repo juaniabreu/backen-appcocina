@@ -53,6 +53,7 @@ public class Receta {
     private List<Valoracion> valoraciones;
 
     @ManyToMany(mappedBy = "listaRecetasGuardadas")
+    @JsonIgnore
     private List<Usuario> usuariosQueGuardaron = new ArrayList<>();
 
     public List<Usuario> getUsuariosQueGuardaron() {
