@@ -61,7 +61,12 @@ public class Usuario implements UserDetails {
     private String fotoDniDorso;
 
     private String edad;
-    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL)
+    @ManyToMany
+    @JoinTable(
+            name = "usuario_recetas_guardadas",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "receta_id")
+    )
     @JsonManagedReference("usuario-recetas")
     private List<Receta> listaRecetas;
     @OneToMany(mappedBy = "id")

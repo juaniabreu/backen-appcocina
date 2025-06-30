@@ -35,19 +35,19 @@ public class Receta {
     @ElementCollection
     private List<String> fotosPlato; // URLs o nombres de archivo
 
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "usuario_id")
     @JsonBackReference("usuario-recetas")
     private Usuario autor;
 
-    @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "receta", orphanRemoval = true,fetch = FetchType.EAGER)
     @JsonManagedReference("receta-ingredientes")
     private List<IngredienteReceta> ingredientes;
 
-    @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "receta", orphanRemoval = true,fetch = FetchType.EAGER)
     @JsonManagedReference("receta-pasos")
     private List<PasoReceta> pasos;
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "id", orphanRemoval = true,fetch = FetchType.EAGER)
     @JsonManagedReference("receta-valoraciones")
     private List<Valoracion> valoraciones;
 

@@ -141,8 +141,8 @@ public class RecetaService {
     public Optional<Receta> buscarPorNombreUsuario(String nombre, Long usuarioId) {
        return recetaRepo.findByNombreIgnoreCaseAndAutorId(nombre, usuarioId);
     }
-    public void borrarReceta(Long id){
-        recetaRepo.deleteById(id);
+    public void borrarReceta(Receta receta){
+        recetaRepo.delete(receta);
     }
     public Optional<Receta> buscarPorNombreReceta(String nombre){
         return recetaRepo.findByNombre(nombre);

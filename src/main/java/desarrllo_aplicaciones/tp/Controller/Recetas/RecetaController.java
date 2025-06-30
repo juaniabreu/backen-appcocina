@@ -5,12 +5,14 @@ import desarrllo_aplicaciones.tp.Controller.Recetas.dto.RecetaDTO;
 import desarrllo_aplicaciones.tp.Controller.Recetas.dto.ValoracionDTO;
 import desarrllo_aplicaciones.tp.model.Cursos.Usuario;
 import desarrllo_aplicaciones.tp.model.Recetas.*;
+import desarrllo_aplicaciones.tp.repository.Cursos.UsuarioRepository;
 import desarrllo_aplicaciones.tp.repository.Recetas.RecetaRepository;
 import desarrllo_aplicaciones.tp.services.Cursos.CursoService;
 import desarrllo_aplicaciones.tp.services.CustomUserDetailsService;
 import desarrllo_aplicaciones.tp.services.Recetas.RecetaService;
 import desarrllo_aplicaciones.tp.services.Recetas.ValoracionService;
 import jakarta.annotation.security.PermitAll;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +36,8 @@ public class RecetaController {
     private ValoracionService valoracionService;
     @Autowired
     private RecetaRepository recetaRepository;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
 /*
 
@@ -127,10 +131,18 @@ GET /recetas/noIngrediente?nombre=harina: recetas sin cierto ingrediente ?????**
     }
 
     @DeleteMapping("/recetas/{id}")
-    public ResponseEntity<String> eliminarReceta(@PathVariable Long id) {
-        recetaService.borrarReceta(id);
-        return ResponseEntity.accepted().build();
+    public ResponseEntity<?> eliminarReceta(@PathVariable Long id) {
+
+            Optional<Receta> receta = recetaService.findbyID(id);
+            if (receta.isPresent()) {
+                Receta receta1  = receta.get();
+                receta1.setAutor(null);
+                return ResponseEntity.noContent().build(); // 204 No Content
+            }
+            return ResponseEntity.notFound().build();
+
     }
+
     @PermitAll
     @PostMapping("/crear")
     public ResponseEntity<Receta> crearReceta(@RequestBody Receta receta) {
@@ -158,19 +170,34 @@ GET /recetas/noIngrediente?nombre=harina: recetas sin cierto ingrediente ?????**
     @GetMapping("/{id}/obtenerGuardadas")
     public ResponseEntity<List<Receta>> ObtenerRectasGuardadas(@PathVariable Long id) {
         Usuario usuario = userDetailsService.findById(id);
+        for (Receta receta : usuario.getListaRecetasGuardadas()) {
+            System.out.println(receta.getId());
+        }
         return ResponseEntity.ok().body(usuario.getListaRecetasGuardadas());
     }
 
     @PutMapping("/{id}/guardarEnUsuario")
-    public ResponseEntity<List<Receta>> guardarRecetaEnUsuario(@PathVariable Long id, @RequestBody Long idUsuario) {
-        Usuario usuario = userDetailsService.findById(idUsuario);
-        List<Receta> lista = usuario.getListaRecetasGuardadas();
-        Optional<Receta> receta = recetaService.findbyID(id);
-        if (receta.isPresent()) {
-            lista.add(receta.get());
-            return ResponseEntity.ok().body(lista);
+    @Transactional
+
+    public ResponseEntity<List<Receta>> guardarRecetaEnUsuario(
+            @PathVariable Long id,
+            @RequestBody Long idUsuario) {
+
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Receta receta = recetaService.findbyID(id)
+                .orElseThrow(() -> new RuntimeException("Receta no encontrada"));
+
+        // Evitar duplicados
+        if (!usuario.getListaRecetasGuardadas().contains(receta)) {
+            usuario.getListaRecetasGuardadas().add(receta);
         }
-        return ResponseEntity.notFound().build();
+
+        usuarioRepository.save(usuario); // 💾 Guarda el vínculo en la tabla intermedia
+
+        return ResponseEntity.ok(usuario.getListaRecetasGuardadas());
+
     }
 
     @PutMapping("/{id}/guardar")

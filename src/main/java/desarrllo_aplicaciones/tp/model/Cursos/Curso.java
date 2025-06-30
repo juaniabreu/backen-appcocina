@@ -38,7 +38,15 @@ public class Curso {
     private double precio;
 
     private String horario;
+    private String foto;
 
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
+    }
 
     @ManyToMany
     @JoinTable(name = "curso_sede",
