@@ -202,6 +202,8 @@ GET /recetas/noIngrediente?nombre=harina: recetas sin cierto ingrediente ?????**
         Optional<Receta> receta = recetaService.findbyID(id);
         if (receta.isPresent()) {
             lista.remove(receta.get());
+            usuario.setListaRecetasGuardadas(lista);
+            usuarioRepository.save(usuario);
             return ResponseEntity.ok().body(lista);
         }
         return ResponseEntity.notFound().build();
