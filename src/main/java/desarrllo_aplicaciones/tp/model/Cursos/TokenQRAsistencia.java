@@ -1,30 +1,28 @@
 package desarrllo_aplicaciones.tp.model.Cursos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import desarrllo_aplicaciones.tp.model.Cursos.Usuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Entity
-@NoArgsConstructor @AllArgsConstructor
-public class Asistencia {
+@NoArgsConstructor
+@AllArgsConstructor
+public class TokenQRAsistencia {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JsonIgnore
-    private InscripcionCurso inscripcion;
+    private CursoSede cursoSede;
 
     private LocalDate fechaClase;
 
-    private boolean presente;
+    private String token; // UUID
+
+    private boolean activo = true;
 
     public Long getId() {
         return id;
@@ -34,12 +32,12 @@ public class Asistencia {
         this.id = id;
     }
 
-    public InscripcionCurso getInscripcion() {
-        return inscripcion;
+    public CursoSede getCursoSede() {
+        return cursoSede;
     }
 
-    public void setInscripcion(InscripcionCurso inscripcion) {
-        this.inscripcion = inscripcion;
+    public void setCursoSede(CursoSede cursoSede) {
+        this.cursoSede = cursoSede;
     }
 
     public LocalDate getFechaClase() {
@@ -50,11 +48,19 @@ public class Asistencia {
         this.fechaClase = fechaClase;
     }
 
-    public boolean isPresente() {
-        return presente;
+    public String getToken() {
+        return token;
     }
 
-    public void setPresente(boolean presente) {
-        this.presente = presente;
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 }

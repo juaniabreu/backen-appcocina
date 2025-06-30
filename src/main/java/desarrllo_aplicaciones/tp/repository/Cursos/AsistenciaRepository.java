@@ -1,6 +1,7 @@
 package desarrllo_aplicaciones.tp.repository.Cursos;
 
 import desarrllo_aplicaciones.tp.model.Cursos.Asistencia;
+import desarrllo_aplicaciones.tp.model.Cursos.InscripcionCurso;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,8 +10,7 @@ import java.util.List;
 
 @Repository
 public interface AsistenciaRepository extends JpaRepository<Asistencia, Long> {
+    boolean existsByInscripcionAndFechaClase(InscripcionCurso inscripcion, LocalDate fechaClase);
 
-    List<Asistencia> findByAlumnoId(Long alumnoId);
-
-    List<Asistencia> findByCursoIdAndFechaClase(Long cursoId, LocalDate fechaClase);
+    long countByInscripcionAndPresenteTrue(InscripcionCurso inscripcion);
 }

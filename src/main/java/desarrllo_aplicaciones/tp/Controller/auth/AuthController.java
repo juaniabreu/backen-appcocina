@@ -126,11 +126,13 @@
             return ResponseEntity.ok(usuario);
         }
         @PostMapping("/forgot-password")
-        public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) throws MessagingException {
             // Verificamos que exista el usuario
             Usuario usuario = usuarioRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+            CodigoVerificacion code =  codigoVerificacionService.generarCodigo(usuario);
+            emailRepository.sendSimpleMail(usuario.getEmail(),code.getCode());
             return ResponseEntity.ok("Se ha enviado un código de recuperación al email.");
         }
 
@@ -138,9 +140,7 @@
         public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
             Usuario usuario = usuarioRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
             usuario.setPassword(passwordEncoder.encode(request.getNewPassword()));
-
             usuarioRepository.save(usuario);
 
             return ResponseEntity.ok("Contraseña actualizada correctamente.");

@@ -1,12 +1,16 @@
 package desarrllo_aplicaciones.tp.Controller.cursos;
 
 import desarrllo_aplicaciones.tp.model.Cursos.Curso;
+import desarrllo_aplicaciones.tp.model.Cursos.InscripcionCurso;
 import desarrllo_aplicaciones.tp.model.Cursos.Sede;
 import desarrllo_aplicaciones.tp.model.Cursos.Usuario;
 import desarrllo_aplicaciones.tp.repository.Cursos.CursoRepository;
+import desarrllo_aplicaciones.tp.repository.Cursos.InscripcionCursoRepository;
 import desarrllo_aplicaciones.tp.services.Cursos.CursoService;
+import desarrllo_aplicaciones.tp.services.Cursos.InscripcionService;
 import desarrllo_aplicaciones.tp.services.Cursos.SedeService;
 import desarrllo_aplicaciones.tp.services.CustomUserDetailsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.auditing.CurrentDateTimeProvider;
 import org.springframework.http.HttpStatus;
@@ -20,116 +24,55 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin("*")
-@RequestMapping("api/cursos")
+@RequestMapping("/api/cursos")
+@RequiredArgsConstructor
 public class CursoController {
+    @Autowired
+    private  CursoService cursoService;
 
     @Autowired
-    private CursoService cursoService;
-    @Autowired
-    private SedeService sedeService;
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
-
-    /**
-     * GET /cursos: listar todos los cursos (solo nombre y breve descripción si es visitante/usuario) x
-     *
-     * GET /cursos/{id}: obtener detalles completos del curso (solo alumno) x
-     *
-     * GET /cursos/disponibles: cursos activos por sede y modalidad x
-     *
-     * POST /cursos: crear curso (admin) x
-     *
-     * PUT /cursos/{id}: editar curso (admin) x
-     *
-     * DELETE /cursos/{id}: eliminar curso (admin) x */
-
-
-
-    // 🔹 GET /cursos → listar todos
+    private InscripcionCursoRepository inscripcionRepo;
     @GetMapping
-    public ResponseEntity<List<Curso>> getAllCursos() {
-        return ResponseEntity.ok(cursoService.getAllCursos());
+    public List<Curso> listarTodos() {
+        return cursoService.listarTodos();
     }
 
-    // 🔹 GET /cursos/{id} → buscar por ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Curso> getCursoById(@PathVariable Long id) {
-        Optional<Curso> curso = cursoService.getCursoById(id);
-        if (curso.isPresent()) {
-            return ResponseEntity.ok(curso.get());
-        }
-        return ResponseEntity.notFound().build();
-    }
-
-    @GetMapping("/disponibles")
-    public ResponseEntity<List<Curso>> getCursoPorNombreSedeModalidad(
-            @RequestParam String nombre,
-            @RequestParam Long sedeId,
-            @RequestParam String modalidad) {
-        LocalDate hoy = LocalDate.now();
-        List<Curso> cursosDisponibles = new ArrayList();
-        List<Curso> cursos = cursoService.getAllCursos();
-        for (Curso curso : cursos) {
-            if (hoy.isBefore(curso.getFechaInicio())) {
-                cursosDisponibles.add(curso);
-            }
-        }
-        return ResponseEntity.ok(cursosDisponibles);
-    }
-    @GetMapping("/{cursoId}/sedes")
-    public ResponseEntity<List<Sede>> getCursoPorSede(@PathVariable Long cursoId) {
-        Optional<Curso> curso = cursoService.getCursoById(cursoId);
-        if (curso.isPresent()) {
-            return ResponseEntity.ok(curso.get().getSedes());
-        }
-        return ResponseEntity.notFound().build();
-    }
 
     @PostMapping
-    public ResponseEntity<Curso> createCurso(@RequestBody Curso curso) {
-        List<Sede> sedes = new ArrayList();
-        for (Sede sede : curso.getSedes()) {
-            Optional<Sede> sedeEncontrada = sedeService.findById(sede.getId());
-            if (sedeEncontrada.isPresent()) {
-                sedes.add(sedeEncontrada.get());
-            }
-        }
-        curso.setSedes(sedes);
-        return ResponseEntity.status(HttpStatus.CREATED).body(cursoService.createCurso(curso));
+    public ResponseEntity<Curso> crearCurso(@RequestBody Curso curso) {
+        Curso creado = cursoService.crearCurso(curso);
+        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+    }
+    @GetMapping("/usuario/{usuarioId}/estado")
+    public List<InscripcionCurso> porEstado(@PathVariable Long usuarioId, @RequestParam String tipo) {
+        List<InscripcionCurso> todas = inscripcionRepo.findByAlumnoId(usuarioId);
+        LocalDate hoy = LocalDate.now();
+
+        return switch (tipo.toLowerCase()) {
+            case "activos" -> todas.stream()
+                    .filter(i -> !hoy.isBefore(i.getCursoSede().getFechaInicio()) &&
+                            !hoy.isAfter(i.getCursoSede().getFechaFin()))
+                    .toList();
+            case "futuros" -> todas.stream()
+                    .filter(i -> hoy.isBefore(i.getCursoSede().getFechaInicio()))
+                    .toList();
+            case "finalizados" -> todas.stream()
+                    .filter(i -> hoy.isAfter(i.getCursoSede().getFechaFin()))
+                    .toList();
+            default -> todas;
+        };
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Curso> updateCurso(@PathVariable Long id, @RequestBody Curso curso) {
-        curso.setId(id);
-        return ResponseEntity.ok(cursoService.updateCurso(curso));
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Curso> obtenerPorId(@PathVariable Long id) {
+        return cursoService.obtenerPorId(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCurso(@PathVariable Long id) {
-        Optional<Curso> curso = cursoService.getCursoById(id);
-        if (curso.isPresent()) {
-            cursoService.deleteCurso(curso.get());
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
-    }
-    @GetMapping("/{id}/cursosUsuario")
-    public ResponseEntity<List<Curso>> getCursosUsuario(@PathVariable Long id) {
-        Usuario usuario= customUserDetailsService.findById(id);
-        return ResponseEntity.ok().body(usuario.getCursosInscriptos());
-    }
-    @PostMapping("/{idCurso}/inscribirse")
-    public ResponseEntity<?> inscribirseCurso(
-            @PathVariable Long idCurso,
-            @RequestParam Long idSede,
-            @RequestParam Long idUsuario) {
-        try {
-
-            Curso curso = cursoService.inscribirAlumno(idCurso, idUsuario);
-            return ResponseEntity.ok("Inscripción exitosa al curso: " + curso.getNombre());
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    @GetMapping("/modalidad/{modalidad}")
+    public List<Curso> filtrarPorModalidad(@PathVariable Curso.Modalidad modalidad) {
+        return cursoService.filtrarPorModalidad(modalidad);
     }
 }

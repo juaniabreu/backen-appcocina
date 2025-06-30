@@ -70,6 +70,11 @@ public class Usuario implements UserDetails {
     )
     @JsonIgnore
     private List<Receta> listaRecetasGuardadas = new ArrayList<>();
+
+    @OneToMany(mappedBy = "alumno", cascade = CascadeType.ALL)
+    @JsonIgnore // ← evita loop al serializar inscripciones desde el usuario
+    private List<InscripcionCurso> inscripciones = new ArrayList<>();
+
     @ManyToMany
     @JoinTable(name = "usuario_curso")
     private List<Curso> cursosInscriptos;
@@ -80,6 +85,14 @@ public class Usuario implements UserDetails {
 
     public void setCursosInscriptos(List<Curso> cursosInscriptos) {
         this.cursosInscriptos = cursosInscriptos;
+    }
+
+    public List<InscripcionCurso> getInscripciones() {
+        return inscripciones;
+    }
+
+    public void setInscripciones(List<InscripcionCurso> inscripciones) {
+        this.inscripciones = inscripciones;
     }
 
     public List<Receta> getListaRecetasGuardadas() {

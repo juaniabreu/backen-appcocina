@@ -13,87 +13,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
 public class Curso {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
 
-    @Column(nullable = false)
-    private String nombre;
+        private String nombre;
+        private String descripcionCorta;
+        @Lob
+        private String descripcionLarga;
 
-    private String descripcionCorta;
+        @Enumerated(EnumType.STRING)
+        private Modalidad modalidad; // PRESENCIAL, VIRTUAL, ONLINE
 
-    @Lob
-    private String descripcionCompleta;
+        @ElementCollection
+        private List<String> temas;
 
-    @Column(nullable = false)
-    private String modalidad; // presencial, virtual, online
+        @ElementCollection
+        private List<String> practicas;
 
-    @Column(nullable = false)
-    private double precio;
+        private boolean requiereInsumos;
+        private boolean requiereUtensilios;
 
-    private String horario;
-    private String foto;
+        @OneToMany(mappedBy = "curso")
+        @JsonIgnore
+        private List<CursoSede> cursoSedes;
 
-    public String getFoto() {
-        return foto;
-    }
-
-    public void setFoto(String foto) {
-        this.foto = foto;
-    }
-
-    @ManyToMany
-    @JoinTable(name = "curso_sede",
-    joinColumns = @JoinColumn(name = "curso_id"),
-    inverseJoinColumns = @JoinColumn(name = "sede_id")
-    )
-    private List<Sede> sedes;
-
-    public List<Sede> getSedes() {
-        return sedes;
-    }
-
-    public void setSedes(List<Sede> sedes) {
-        this.sedes = sedes;
-    }
-
-    private LocalDate fechaInicio;
-    private LocalDate fechaFin;
-
-    private String dia;
-
-    public String getDia() {
-        return dia;
-    }
-
-    public void setDia(String dia) {
-        this.dia = dia;
-    }
-
-    @ElementCollection
-    private List<String> temas; // o @OneToMany si querés detalle
-
-    @ElementCollection
-    private List<String> insumosRequeridos;
-
-    private boolean requiereAsistencia;
-
-    @ManyToMany(mappedBy = "cursosInscriptos")
-    private List<Usuario> alumnos;
-
-    public List<Usuario> getAlumnos() {
-        return alumnos;
-    }
-
-    public void setAlumnos(List<Usuario> alumnos) {
-        this.alumnos = alumnos;
-    }
+        public enum Modalidad {
+            PRESENCIAL, VIRTUAL, ONLINE
+        }
 
     public Long getId() {
         return id;
@@ -102,7 +52,6 @@ public class Curso {
     public void setId(Long id) {
         this.id = id;
     }
-
 
     public String getNombre() {
         return nombre;
@@ -120,52 +69,20 @@ public class Curso {
         this.descripcionCorta = descripcionCorta;
     }
 
-    public String getDescripcionCompleta() {
-        return descripcionCompleta;
+    public String getDescripcionLarga() {
+        return descripcionLarga;
     }
 
-    public void setDescripcionCompleta(String descripcionCompleta) {
-        this.descripcionCompleta = descripcionCompleta;
+    public void setDescripcionLarga(String descripcionLarga) {
+        this.descripcionLarga = descripcionLarga;
     }
 
-    public String getModalidad() {
+    public Modalidad getModalidad() {
         return modalidad;
     }
 
-    public void setModalidad(String modalidad) {
+    public void setModalidad(Modalidad modalidad) {
         this.modalidad = modalidad;
-    }
-
-    public double getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(double precio) {
-        this.precio = precio;
-    }
-
-    public String getHorario() {
-        return horario;
-    }
-
-    public void setHorario(String horario) {
-        this.horario = horario;
-    }
-
-    public LocalDate getFechaInicio() {
-        return fechaInicio;
-    }
-
-    public void setFechaInicio(LocalDate fechaInicio) {
-        this.fechaInicio = fechaInicio;
-    }
-
-    public LocalDate getFechaFin() {
-        return fechaFin;
-    }
-
-    public void setFechaFin(LocalDate fechaFin) {
-        this.fechaFin = fechaFin;
     }
 
     public List<String> getTemas() {
@@ -176,19 +93,36 @@ public class Curso {
         this.temas = temas;
     }
 
-    public List<String> getInsumosRequeridos() {
-        return insumosRequeridos;
+    public List<String> getPracticas() {
+        return practicas;
     }
 
-    public void setInsumosRequeridos(List<String> insumosRequeridos) {
-        this.insumosRequeridos = insumosRequeridos;
+    public void setPracticas(List<String> practicas) {
+        this.practicas = practicas;
     }
 
-    public boolean isRequiereAsistencia() {
-        return requiereAsistencia;
+    public boolean isRequiereInsumos() {
+        return requiereInsumos;
     }
 
-    public void setRequiereAsistencia(boolean requiereAsistencia) {
-        this.requiereAsistencia = requiereAsistencia;
+    public void setRequiereInsumos(boolean requiereInsumos) {
+        this.requiereInsumos = requiereInsumos;
+    }
+
+    public boolean isRequiereUtensilios() {
+        return requiereUtensilios;
+    }
+
+    public void setRequiereUtensilios(boolean requiereUtensilios) {
+        this.requiereUtensilios = requiereUtensilios;
+    }
+
+    public List<CursoSede> getCursoSedes() {
+        return cursoSedes;
+    }
+
+    public void setCursoSedes(List<CursoSede> cursoSedes) {
+        this.cursoSedes = cursoSedes;
     }
 }
+
