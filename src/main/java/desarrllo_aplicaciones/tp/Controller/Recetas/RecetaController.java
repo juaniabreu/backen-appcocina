@@ -1,5 +1,7 @@
 package desarrllo_aplicaciones.tp.Controller.Recetas;
 
+import desarrllo_aplicaciones.tp.Controller.Recetas.dto.AutorDTO;
+import desarrllo_aplicaciones.tp.Controller.Recetas.dto.RecetaDTO;
 import desarrllo_aplicaciones.tp.Controller.Recetas.dto.ValoracionDTO;
 import desarrllo_aplicaciones.tp.model.Cursos.Usuario;
 import desarrllo_aplicaciones.tp.model.Recetas.*;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,8 +57,32 @@ GET /recetas/noIngrediente?nombre=harina: recetas sin cierto ingrediente ?????**
 
 
     @GetMapping
-    public ResponseEntity<List<Receta>> listarTodas() {
-        return ResponseEntity.ok().body(recetaService.obtenerRecetasAprobadas());
+    public ResponseEntity<List<RecetaDTO>> listarTodas() {
+        List<Receta> recetas = recetaService.obtenerRecetasAprobadas();
+
+        List<RecetaDTO> dtos = recetas.stream().map(receta -> {
+            AutorDTO autorDTO = new AutorDTO();
+            autorDTO.setId(receta.getAutor().getId());
+            autorDTO.setNombre(receta.getAutor().getNombre());
+            autorDTO.setUsername(receta.getAutor().getUsername());
+
+            RecetaDTO dto = new RecetaDTO();
+            dto.setId(receta.getId());
+            dto.setNombre(receta.getNombre());
+            dto.setDescripcion(receta.getDescripcion());
+            dto.setPorciones(receta.getPorciones());
+            dto.setTipo(receta.getTipo());
+            dto.setFotosPlato(receta.getFotosPlato());
+            dto.setAutor(autorDTO);
+            dto.setPasos(receta.getPasos());
+            dto.setValoraciones(receta.getValoraciones());
+            dto.setIngredientes(receta.getIngredientes());
+            dto.setFechaCreacion(receta.getFechaCreacion());
+            dto.setAprobada(receta.isAprobada());
+            return dto;
+        }).toList();
+
+        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/recientes")
@@ -88,10 +115,6 @@ GET /recetas/noIngrediente?nombre=harina: recetas sin cierto ingrediente ?????**
         return ResponseEntity.ok(recetaService.guardarReceta(receta));
     }
 
-    @GetMapping("/tipo")
-    public List<Receta> buscarPorTipo(@RequestParam String tipo) {
-        return recetaService.buscarPorTipo(tipo);
-    }
 
     @GetMapping("/usuario/{idUsuario}")
     public List<Receta> buscarPorUsuario(@PathVariable Long idUsuario) {
@@ -130,16 +153,6 @@ GET /recetas/noIngrediente?nombre=harina: recetas sin cierto ingrediente ?????**
             paso.setReceta(receta);
         }
         return ResponseEntity.ok(recetaService.guardarReceta(receta));
-    }
-
-    @GetMapping("/{id}/ingredientes")
-    public List<IngredienteReceta> ingredientes(@PathVariable Long id) {
-        return recetaService.obtenerIngredientes(id);
-    }
-
-    @GetMapping("/{id}/pasos")
-    public List<PasoReceta> pasos(@PathVariable Long id) {
-        return recetaService.obtenerPasos(id);
     }
 
     @GetMapping("/{id}/obtenerGuardadas")
@@ -202,16 +215,6 @@ GET /recetas/noIngrediente?nombre=harina: recetas sin cierto ingrediente ?????**
         return recetaService.obtenerValoracionesAprobadas(id);
     }
 
-    @GetMapping("/ingrediente")
-    public List<Receta> buscarPorIngrediente(@RequestParam String nombre) {
-        return recetaService.buscarPorIngrediente(nombre);
-    }
-
-
-    @PostMapping("/filtroavanzado")
-    public List<Receta> buscarPorIngredientes(@RequestBody List<String> ingredientes) {
-        return recetaService.buscarPorIngredientes(ingredientes);
-    }
 
     @PutMapping("/aprobarReceta/{id}")
     public ResponseEntity<Receta> aprobarReceta(@PathVariable Long id) {
