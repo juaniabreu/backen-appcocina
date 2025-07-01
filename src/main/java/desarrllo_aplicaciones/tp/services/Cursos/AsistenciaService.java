@@ -58,7 +58,6 @@ public class AsistenciaService {
         asistenciaRepo.save(asistencia);
     }
 
-    // Calcular % de asistencia (usado en DTO detalle)
     public double calcularPorcentajeAsistenciaById(Long inscripcionId) {
         InscripcionCurso inscripcion = inscripcionRepo.findById(inscripcionId)
                 .orElseThrow(() -> new RuntimeException("Inscripción no encontrada"));
@@ -73,7 +72,6 @@ public class AsistenciaService {
         return ((double) asistencias / diasTotales) * 100;
     }
 
-    // Generar QR (o devolver el existente)
     public String generarQRBase64(Long cursoSedeId, LocalDate fecha) {
         CursoSede cursoSede = cursoSedeRepo.findById(cursoSedeId)
                 .orElseThrow(() -> new RuntimeException("CursoSede no encontrado"));

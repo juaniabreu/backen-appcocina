@@ -115,4 +115,8 @@ public class InscripcionCursoController {
 
         return ResponseEntity.ok(dto);
     }
+    @GetMapping("/usuario/asistencia/{cursoSedeId}/{userId}")
+    public ResponseEntity<List<Asistencia>> obtenerAsistencia(@PathVariable Long cursoSedeId, @PathVariable Long userId) {
+        return  null;
+    }
 }

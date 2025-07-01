@@ -95,4 +95,9 @@ import java.time.LocalDateTime;
     public void setFecha(LocalDateTime fecha) {
         this.fecha = fecha;
     }
-}
+
+        @Override
+        public String toString() {
+            return super.toString();
+        }
+    }
