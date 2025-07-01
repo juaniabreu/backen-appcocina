@@ -105,12 +105,14 @@ public class RecetaService {
 
     public Optional<Receta> editarReceta(Long id, Receta recetaActualizada) {
         return recetaRepo.findById(id).map(recetaExistente -> {
-
             recetaExistente.setNombre(recetaActualizada.getNombre());
             recetaExistente.setDescripcion(recetaActualizada.getDescripcion());
             recetaExistente.setPorciones(recetaActualizada.getPorciones());
             recetaExistente.setTipo(recetaActualizada.getTipo());
             recetaExistente.setFotosPlato(recetaActualizada.getFotosPlato());
+
+            // ⚠️ Línea que faltaba
+            recetaExistente.setAutor(recetaActualizada.getAutor());
 
             // Reemplazar ingredientes
             recetaExistente.getIngredientes().clear();
@@ -125,7 +127,7 @@ public class RecetaService {
             return recetaRepo.save(recetaExistente);
         });
     }
-
+    
     public List<Receta> buscarPorIngredientes(List<String> ingredientes) {
         List<IngredienteReceta> relacionados = ingredienteRepo.findAll()
                 .stream()
