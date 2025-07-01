@@ -121,21 +121,6 @@ GET /recetas/noIngrediente?nombre=harina: recetas sin cierto ingrediente ?????**
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/buscar")
-    public ResponseEntity<List<Receta>> buscarRecetas(
-            @RequestParam(required = false) String nombre,
-            @RequestParam(required = false) String tipo,
-            @RequestParam(required = false) String ingredienteIncluido,
-            @RequestParam(required = false) String ingredienteExcluido,
-            @RequestParam(required = false, defaultValue = "fecha") String ordenarPor,
-            @RequestParam(required = false, defaultValue = "desc") String orden) {
-
-        List<Receta> recetas = recetaService.buscarConFiltros(
-                nombre, tipo, ingredienteIncluido, ingredienteExcluido, ordenarPor, orden
-        );
-
-        return ResponseEntity.ok(recetas);
-    }
 
     @GetMapping("/usuario/{idUsuario}")
     public List<Receta> buscarPorUsuario(@PathVariable Long idUsuario) {

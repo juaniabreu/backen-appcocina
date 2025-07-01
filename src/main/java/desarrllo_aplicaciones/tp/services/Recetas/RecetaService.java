@@ -29,47 +29,7 @@ public class RecetaService {
         return recetaRepo.findByAprobadaTrue();
     }
 
-    public List<Receta> buscarConFiltros(String nombre, String tipo, String ingredienteIncluido, String ingredienteExcluido, String ordenarPor, String orden) {
-        List<Receta> recetas = recetaRepo.findAll();
-
-        if (nombre != null && !nombre.isBlank()) {
-            recetas = recetas.stream()
-                    .filter(r -> r.getNombre().toLowerCase().contains(nombre.toLowerCase()))
-                    .toList();
-        }
-
-        if (tipo != null && !tipo.isBlank()) {
-            recetas = recetas.stream()
-                    .filter(r -> tipo.equalsIgnoreCase(r.getTipo()))
-                    .toList();
-        }
-
-        if (ingredienteIncluido != null && !ingredienteIncluido.isBlank()) {
-            recetas = recetas.stream()
-                    .filter(r -> r.getIngredientes().stream()
-                            .anyMatch(i -> i.getNombreIngrediente().toLowerCase().contains(ingredienteIncluido.toLowerCase())))
-                    .toList();
-        }
-
-        if (ingredienteExcluido != null && !ingredienteExcluido.isBlank()) {
-            recetas = recetas.stream()
-                    .filter(r -> r.getIngredientes().stream()
-                            .noneMatch(i -> i.getNombreIngrediente().toLowerCase().contains(ingredienteExcluido.toLowerCase())))
-                    .toList();
-        }
-
-        Comparator<Receta> comparator = switch (ordenarPor) {
-            case "nombre" -> Comparator.comparing(Receta::getNombre, String.CASE_INSENSITIVE_ORDER);
-            case "autor" -> Comparator.comparing(r -> r.getAutor().getUsername(), String.CASE_INSENSITIVE_ORDER);
-            default -> Comparator.comparing(Receta::getFechaCreacion); // por fecha
-        };
-
-        if ("desc".equalsIgnoreCase(orden)) {
-            comparator = comparator.reversed();
-        }
-
-        return recetas.stream().sorted(comparator).toList();
-    }
+  
 
     public List<Receta> buscarPorNombre(String nombre) {
         return recetaRepo.findByNombreContainingIgnoreCaseAndAprobadaTrue(nombre);
