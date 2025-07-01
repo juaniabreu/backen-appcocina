@@ -1,6 +1,7 @@
 package desarrllo_aplicaciones.tp.Controller.cursos;
 
 import desarrllo_aplicaciones.tp.model.Cursos.CursoSede;
+import desarrllo_aplicaciones.tp.model.Cursos.Sede;
 import desarrllo_aplicaciones.tp.repository.Cursos.CursoSedeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ public class CursoSedeController {
     // GET: por curso
     @GetMapping("/curso/{cursoId}")
     public List<CursoSede> porCurso(@PathVariable Long cursoId) {
+
         return cursoSedeRepo.findByCursoId(cursoId);
     }
 
@@ -58,5 +60,10 @@ public class CursoSedeController {
         }
         cursoSedeRepo.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/curso/{cursoId}/sedes")
+    public ResponseEntity<List<Sede>> listarSedesPorCurso(@PathVariable Long cursoId) {
+        List<Sede> sedes = cursoSedeRepo.findSedesByCursoId(cursoId);
+        return ResponseEntity.ok(sedes);
     }
 }

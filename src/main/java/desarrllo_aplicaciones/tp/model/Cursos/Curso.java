@@ -22,6 +22,8 @@ public class Curso {
 
         private String nombre;
         private String descripcionCorta;
+        private String foto;
+
         @Lob
         private String descripcionLarga;
 
@@ -44,6 +46,15 @@ public class Curso {
         public enum Modalidad {
             PRESENCIAL, VIRTUAL, ONLINE
         }
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
+    }
+
 
     public Long getId() {
         return id;

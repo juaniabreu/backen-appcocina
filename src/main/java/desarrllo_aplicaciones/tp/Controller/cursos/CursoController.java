@@ -75,4 +75,5 @@ public class CursoController {
     public List<Curso> filtrarPorModalidad(@PathVariable Curso.Modalidad modalidad) {
         return cursoService.filtrarPorModalidad(modalidad);
     }
+
 }

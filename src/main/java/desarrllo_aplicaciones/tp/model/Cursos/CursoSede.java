@@ -28,10 +28,10 @@ public class CursoSede {
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
 
-    private String horario; // o puede ser LocalTime + Enum de día
+    private String horario;
 
     private Double precio;
-    private Double descuento; // opcional
+    private Double descuento;
     private Integer cuposTotales;
     private Integer cuposDisponibles;
 
