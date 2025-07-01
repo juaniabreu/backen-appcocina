@@ -113,10 +113,12 @@ GET /recetas/noIngrediente?nombre=harina: recetas sin cierto ingrediente ?????**
         return ResponseEntity.notFound().build();
     }
 
-    @PutMapping("/editar")
-    public ResponseEntity<Receta> editarReceta(@RequestBody Receta receta) {
-        recetaService.guardarReceta(receta);
-        return ResponseEntity.ok(recetaService.guardarReceta(receta));
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editarReceta(@PathVariable Long id, @RequestBody Receta recetaActualizada) {
+        return recetaService.editarReceta(id, recetaActualizada)
+                .map(receta -> ResponseEntity.ok("Receta actualizada correctamente"))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
 

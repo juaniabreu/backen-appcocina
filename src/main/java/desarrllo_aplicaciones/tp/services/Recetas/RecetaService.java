@@ -100,6 +100,28 @@ public class RecetaService {
                 .toList();
     }
 
+    public Optional<Receta> editarReceta(Long id, Receta recetaActualizada) {
+        return recetaRepo.findById(id).map(recetaExistente -> {
+
+            recetaExistente.setNombre(recetaActualizada.getNombre());
+            recetaExistente.setDescripcion(recetaActualizada.getDescripcion());
+            recetaExistente.setPorciones(recetaActualizada.getPorciones());
+            recetaExistente.setTipo(recetaActualizada.getTipo());
+            recetaExistente.setFotosPlato(recetaActualizada.getFotosPlato());
+
+            // Reemplazar ingredientes
+            recetaExistente.getIngredientes().clear();
+            recetaExistente.getIngredientes().addAll(recetaActualizada.getIngredientes());
+            recetaExistente.getIngredientes().forEach(i -> i.setReceta(recetaExistente));
+
+            // Reemplazar pasos
+            recetaExistente.getPasos().clear();
+            recetaExistente.getPasos().addAll(recetaActualizada.getPasos());
+            recetaExistente.getPasos().forEach(p -> p.setReceta(recetaExistente));
+
+            return recetaRepo.save(recetaExistente);
+        });
+    }
 
     public List<Receta> buscarPorIngredientes(List<String> ingredientes) {
         List<IngredienteReceta> relacionados = ingredienteRepo.findAll()

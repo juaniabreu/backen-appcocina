@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@RequestMapping("/api/curso-sede")
+    @RequestMapping("/api/curso-sede")
 @RequiredArgsConstructor
 public class CursoSedeController {
     @Autowired
